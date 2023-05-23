@@ -15,10 +15,10 @@ public abstract class HttpTransport<T extends Output<?>> implements Transport<T>
     protected final java.net.http.HttpClient httpClient;
     protected final URI uri;
 
-    public HttpTransport(Gson jsonMapper, HttpClient httpClient, String uri) {
+    public HttpTransport(Gson jsonMapper, HttpClient httpClient, URI uri) {
         this.jsonMapper = jsonMapper;
         this.httpClient = httpClient;
-        this.uri = URI.create(uri);
+        this.uri = uri;
     }
 
     @Override

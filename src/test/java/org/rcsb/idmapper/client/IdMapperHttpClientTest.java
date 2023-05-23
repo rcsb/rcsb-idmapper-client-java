@@ -1,13 +1,15 @@
 package org.rcsb.idmapper.client;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.rcsb.common.constants.ContentType;
 import org.rcsb.idmapper.input.Input;
 import org.rcsb.idmapper.input.TranslateInput;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
 import java.util.List;
 
 class IdMapperHttpClientTest {
@@ -20,7 +22,7 @@ class IdMapperHttpClientTest {
         input.to =  Input.Type.polymer_entity;
         input.content_type = List.of(ContentType.experimental);
 
-        var result = new IdMapperHttpClient().doTranslate(
+        var result = new IdMapperHttpClient(HttpClient.newHttpClient(), URI.create("http://localhost:8080"), new Gson()).doTranslate(
                 input
         );
         var actual = result.block();
