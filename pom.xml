@@ -4,8 +4,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.rcsb.idmapper</groupId>
-    <artifactId>client</artifactId>
+    <groupId>org.rcsb</groupId>
+    <artifactId>rcsb-idmapper-client</artifactId>
     <version>0.0.1</version>
 
     <properties>
