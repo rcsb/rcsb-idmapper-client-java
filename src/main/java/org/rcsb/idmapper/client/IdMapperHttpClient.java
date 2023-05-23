@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 
-public class IdMapperHttpClient {
+public class IdMapperHttpClient implements IdMapperClient {
 
     private final HttpClient httpClient;
     private final URI uri;
@@ -27,6 +27,7 @@ public class IdMapperHttpClient {
     }
 
 
+    @Override
     public Mono<TranslateOutput> doTranslate(@Nonnull TranslateInput input){
         try {
             var transport = new TranslateHttpTransport(jsonMapper,httpClient, uri.resolve("/translate"));
@@ -36,6 +37,7 @@ public class IdMapperHttpClient {
         }
     }
 
+    @Override
     public Mono<TranslateOutput> doGroup(@Nonnull GroupInput input){
         try {
             var transport = new TranslateHttpTransport(jsonMapper,httpClient, uri.resolve("/group"));
@@ -45,6 +47,7 @@ public class IdMapperHttpClient {
         }
     }
 
+    @Override
     public Mono<AllOutput> doAll(@Nonnull AllInput input){
         try {
             var transport = new AllHttpTransport(jsonMapper,httpClient, uri.resolve("/all"));
