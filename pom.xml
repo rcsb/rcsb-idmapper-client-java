@@ -13,6 +13,25 @@
         <java.version>17</java.version>
     </properties>
 
+    <distributionManagement>
+        <downloadUrl>http://nexus3.rcsb.org/repository/rcsb-super-proxy/</downloadUrl>
+        <repository>
+            <id>releases</id>
+            <name>RCSB PDB Maven Repository</name>
+            <url>http://nexus3.rcsb.org/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://nexus3.rcsb.org/repository/maven-snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <url>https://github.com/rcsb/rcsb-idmapper-client-java </url>
+        <connection>scm:git:git://github.com/rcsb/rcsb-idmapper-client-java .git</connection>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
