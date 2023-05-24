@@ -3,10 +3,6 @@ package org.rcsb.idmapper.client;
 import com.google.gson.Gson;
 import io.rsocket.Payload;
 import io.rsocket.RSocket;
-import io.rsocket.core.RSocketClient;
-import io.rsocket.core.RSocketConnector;
-import io.rsocket.frame.decoder.PayloadDecoder;
-import io.rsocket.transport.netty.client.TcpClientTransport;
 import io.rsocket.util.ByteBufPayload;
 import org.rcsb.idmapper.input.AllInput;
 import org.rcsb.idmapper.input.GroupInput;
@@ -19,12 +15,14 @@ import javax.annotation.Nonnull;
 
 public class IdMapperRSocketClient implements IdMapperClient{
 
-    private final RSocket client =
-            RSocketConnector.create()
-                .payloadDecoder(PayloadDecoder.ZERO_COPY)
-                .connectWith(TcpClientTransport.create(7000)).block();
+    private final RSocket client;
 
-    private final Gson jsonMapper = new JsonMapper().create();
+    private final Gson jsonMapper;
+
+    public IdMapperRSocketClient(RSocket client, Gson jsonMapper) {
+        this.client = client;
+        this.jsonMapper = jsonMapper;
+    }
 
 
     @Override

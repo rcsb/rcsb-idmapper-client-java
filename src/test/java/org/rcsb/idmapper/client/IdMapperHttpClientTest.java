@@ -8,6 +8,7 @@ import org.rcsb.idmapper.input.Input;
 import org.rcsb.idmapper.input.TranslateInput;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,11 +16,13 @@ import java.net.http.HttpClient;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 
 class IdMapperHttpClientTest {
 
     @Test
-    void doTranslate() throws IOException {
+    void doTranslate1000x() throws IOException {
         var input = new TranslateInput();
         input.ids = List.of("BHH4");
         input.from = Input.Type.entry;
@@ -48,6 +51,50 @@ class IdMapperHttpClientTest {
                 }
 
                 );
+    }
+
+    /**
+     * 10K requests per 100 clients (Threads) for 10 s
+     */
+    @Test
+    void doTranslate10000x100x10() throws IOException, InterruptedException {
+        var input = new TranslateInput();
+        input.ids = List.of("BHH4");
+        input.from = Input.Type.entry;
+        input.to =  Input.Type.polymer_entity;
+        input.content_type = List.of(ContentType.experimental);
+
+        var httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_2)
+                .connectTimeout(Duration.ofSeconds(3))
+                .build();
+
+        var client = new IdMapperHttpClient(httpClient, URI.create("http://localhost:8080"), new JsonMapper().create());
+
+        var executor = Executors.newFixedThreadPool(100);
+
+        var latch = new CountDownLatch(1);
+
+
+        Flux.range(1,100)
+                .flatMap(ignored -> {
+                    return Flux.range(1,10000)
+                            .flatMap(moreIgnored -> {
+                                return client.doTranslate(
+                                        input
+                                );
+                            });
+                })
+                .publishOn(Schedulers.fromExecutor(executor))
+                .take(Duration.ofSeconds(10))
+                .count()
+                .subscribe(p -> {
+                            System.out.println("Total count: " + p);
+                            latch.countDown();
+                        }
+                );
+
+        latch.await();
     }
 
     @Test
