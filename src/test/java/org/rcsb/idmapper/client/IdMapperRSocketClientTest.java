@@ -27,7 +27,7 @@ public class IdMapperRSocketClientTest {
     public void before(){
         var rsocket = RSocketConnector.create()
                 .payloadDecoder(PayloadDecoder.ZERO_COPY)
-                .connectWith(TcpClientTransport.create(7000)).block();
+                .connectWith(TcpClientTransport.create("localhost",7000)).block();
 
         var jsonMapper = new JsonMapper().create();
 
@@ -81,19 +81,20 @@ public class IdMapperRSocketClientTest {
         input.content_type = List.of(ContentType.experimental);
 
 
-        var executor = Executors.newFixedThreadPool(100);
+        int numberOfClients = 1000;
+        var executor = Executors.newFixedThreadPool(numberOfClients);
 
         var latch = new CountDownLatch(1);
 //        var counter = new AtomicInteger(0);
 
-        Flux.range(1,100)
-                .flatMap(n -> {
+        Flux.range(1, numberOfClients)
+                .publishOn(Schedulers.fromExecutor(executor))
+                .flatMap(ignored -> {
                     return Flux.range(1,10000)
-                            .flatMap(p -> {
+                            .flatMap(moreIgnored -> {
                                 return client.doTranslate(input);
                             });
                 })
-                .publishOn(Schedulers.fromExecutor(executor))
                 .take(Duration.ofSeconds(10))
 //                .log()
                 .count()

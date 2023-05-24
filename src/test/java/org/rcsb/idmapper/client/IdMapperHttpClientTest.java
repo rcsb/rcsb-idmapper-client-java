@@ -7,6 +7,7 @@ import org.rcsb.common.constants.ContentType;
 import org.rcsb.idmapper.input.Input;
 import org.rcsb.idmapper.input.TranslateInput;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 import reactor.core.scheduler.Schedulers;
 
@@ -71,21 +72,21 @@ class IdMapperHttpClientTest {
 
         var client = new IdMapperHttpClient(httpClient, URI.create("http://localhost:8080"), new JsonMapper().create());
 
-        var executor = Executors.newFixedThreadPool(100);
+        int numberOfClients = 1000;
+        var executor = Executors.newFixedThreadPool(numberOfClients);
 
         var latch = new CountDownLatch(1);
 
 
-        Flux.range(1,100)
+        Flux.range(1, numberOfClients)
+                .publishOn(Schedulers.fromExecutor(executor))
                 .flatMap(ignored -> {
                     return Flux.range(1,10000)
                             .flatMap(moreIgnored -> {
-                                return client.doTranslate(
-                                        input
-                                );
+                                return client.doTranslate(input);
                             });
                 })
-                .publishOn(Schedulers.fromExecutor(executor))
+
                 .take(Duration.ofSeconds(10))
                 .count()
                 .subscribe(p -> {
