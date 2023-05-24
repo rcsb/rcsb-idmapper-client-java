@@ -33,17 +33,24 @@ public class IdMapperRSocketClient implements IdMapperClient{
                 .map(Payload::getDataUtf8)
                 .map(responsePayload -> {
                     return jsonMapper.fromJson(responsePayload, TranslateOutput.class);
-                })
-                .doOnNext(System.out::println);
+                });
     }
 
     @Override
     public Mono<TranslateOutput> doGroup(@Nonnull GroupInput input) {
-        return null;
+        return client.requestResponse(ByteBufPayload.create(jsonMapper.toJson(input), "/group"))
+                .map(Payload::getDataUtf8)
+                .map(responsePayload -> {
+                    return jsonMapper.fromJson(responsePayload, TranslateOutput.class);
+                });
     }
 
     @Override
     public Mono<AllOutput> doAll(@Nonnull AllInput input) {
-        return null;
+        return client.requestResponse(ByteBufPayload.create(jsonMapper.toJson(input), "/all"))
+                .map(Payload::getDataUtf8)
+                .map(responsePayload -> {
+                    return jsonMapper.fromJson(responsePayload, AllOutput.class);
+                });
     }
 }
