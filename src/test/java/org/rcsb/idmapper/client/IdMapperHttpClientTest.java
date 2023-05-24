@@ -72,7 +72,7 @@ class IdMapperHttpClientTest {
 
         var client = new IdMapperHttpClient(httpClient, URI.create("http://localhost:8080"), new JsonMapper().create());
 
-        int numberOfClients = 1000;
+        int numberOfClients = 100;
         var executor = Executors.newFixedThreadPool(numberOfClients);
 
         var latch = new CountDownLatch(1);

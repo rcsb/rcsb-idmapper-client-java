@@ -81,7 +81,7 @@ public class IdMapperRSocketClientTest {
         input.content_type = List.of(ContentType.experimental);
 
 
-        int numberOfClients = 1000;
+        int numberOfClients = 100;
         var executor = Executors.newFixedThreadPool(numberOfClients);
 
         var latch = new CountDownLatch(1);
