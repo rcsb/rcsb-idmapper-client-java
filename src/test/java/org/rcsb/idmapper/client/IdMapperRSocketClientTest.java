@@ -6,6 +6,7 @@ import io.rsocket.frame.decoder.PayloadDecoder;
 import io.rsocket.transport.netty.client.TcpClientTransport;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.rcsb.common.constants.ContentType;
 import org.rcsb.idmapper.input.Input;
@@ -19,6 +20,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Ignore("requires server, currently launched manually")
 public class IdMapperRSocketClientTest {
 
     private IdMapperClient client;

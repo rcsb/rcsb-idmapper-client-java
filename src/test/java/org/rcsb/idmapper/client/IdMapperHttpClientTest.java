@@ -2,6 +2,7 @@ package org.rcsb.idmapper.client;
 
 import com.google.common.base.MoreObjects;
 import com.google.gson.Gson;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.rcsb.common.constants.ContentType;
 import org.rcsb.idmapper.input.Input;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
+@Ignore("requires server, currently launched manually")
 class IdMapperHttpClientTest {
 
     @Test
