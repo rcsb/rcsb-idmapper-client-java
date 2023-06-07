@@ -20,7 +20,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(IdMapperTestContainer.class)
 public class IdMapperRSocketClientTest {
 
