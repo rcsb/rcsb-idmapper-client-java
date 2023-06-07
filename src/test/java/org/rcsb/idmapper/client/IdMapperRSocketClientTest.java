@@ -1,16 +1,16 @@
 package org.rcsb.idmapper.client;
 
 import com.google.common.base.MoreObjects;
+import io.rsocket.RSocket;
 import io.rsocket.core.RSocketConnector;
 import io.rsocket.frame.decoder.PayloadDecoder;
 import io.rsocket.transport.netty.client.TcpClientTransport;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.rcsb.common.constants.ContentType;
 import org.rcsb.idmapper.input.Input;
 import org.rcsb.idmapper.input.TranslateInput;
+import org.testcontainers.containers.GenericContainer;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
@@ -18,22 +18,35 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
-@Ignore("requires server, currently launched manually")
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(IdMapperTestContainer.class)
 public class IdMapperRSocketClientTest {
 
     private IdMapperClient client;
+    private RSocket rsocket;
+    private GenericContainer<?> idMapper;
 
-    @Before
-    public void before(){
-        var rsocket = RSocketConnector.create()
+    public IdMapperRSocketClientTest(IdMapperTestContainer idMapperTestContainer) {
+        this.idMapper = idMapperTestContainer.getIdMapper();
+    }
+
+
+    @BeforeEach
+    public void before(IdMapperTestContainer idMapperTestContainer){
+        rsocket = RSocketConnector.create()
                 .payloadDecoder(PayloadDecoder.ZERO_COPY)
-                .connectWith(TcpClientTransport.create("localhost",7000)).block();
+                .connectWith(TcpClientTransport.create(idMapper.getHost(),idMapper.getMappedPort(7000))).block();
 
         var jsonMapper = new JsonMapper().create();
 
         client = new IdMapperRSocketClient(rsocket, jsonMapper);
+    }
+
+    @AfterEach
+    public void after(){
+        rsocket.dispose();
     }
 
     @Test
@@ -51,6 +64,7 @@ public class IdMapperRSocketClientTest {
     }
 
     @Test
+    @Disabled("requires server, currently launched manually")
     public void doTranslate1000x() {
         var input = new TranslateInput();
         input.ids = List.of("BHH4");
@@ -75,7 +89,9 @@ public class IdMapperRSocketClientTest {
      * 10K requests per 100 clients (Threads) for 10 s
      */
     @Test
+    @Disabled("requires server, currently launched manually")
     public void doTranslate10000x100x10() throws InterruptedException {
+        //RSocket
         var input = new TranslateInput();
         input.ids = List.of("BHH4");
         input.from = Input.Type.entry;
@@ -87,7 +103,6 @@ public class IdMapperRSocketClientTest {
         var executor = Executors.newFixedThreadPool(numberOfClients);
 
         var latch = new CountDownLatch(1);
-//        var counter = new AtomicInteger(0);
 
         Flux.range(1, numberOfClients)
                 .publishOn(Schedulers.fromExecutor(executor))
@@ -101,18 +116,11 @@ public class IdMapperRSocketClientTest {
 //                .log()
                 .count()
                 .subscribe(p -> {
-//                    System.out.println(String.format("%s Elapsed: %s", Thread.currentThread().getName(), p.getT1()));
-//                    System.out.println(MoreObjects.toStringHelper(actual)
-//                            .add("result", actual.results)
-//                            .toString());
-//                    counter.incrementAndGet();
                     System.out.println("Total count:" + p);
                     latch.countDown();
                 });
 
         latch.await();
-
-//        System.out.println("Total count:" + counter.get());
     }
 
     @Test
