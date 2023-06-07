@@ -26,15 +26,11 @@ public class IdMapperRSocketClientTest {
 
     private IdMapperClient client;
     private RSocket rsocket;
-    private GenericContainer<?> idMapper;
-
-    public IdMapperRSocketClientTest(IdMapperTestContainer idMapperTestContainer) {
-        this.idMapper = idMapperTestContainer.getIdMapper();
-    }
 
 
     @BeforeEach
     public void before(IdMapperTestContainer idMapperTestContainer){
+        var idMapper = idMapperTestContainer.getIdMapper();
         rsocket = RSocketConnector.create()
                 .payloadDecoder(PayloadDecoder.ZERO_COPY)
                 .connectWith(TcpClientTransport.create(idMapper.getHost(),idMapper.getMappedPort(7000))).block();
