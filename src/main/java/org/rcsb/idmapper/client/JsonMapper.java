@@ -1,52 +1,20 @@
 package org.rcsb.idmapper.client;
 
-import com.google.common.collect.ArrayListMultimap;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.Multimap;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.*;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
 
 public class JsonMapper {
-    public Gson create() {
-        return new GsonBuilder()
-                //.serializeNulls()
-                .setPrettyPrinting()
-                .enableComplexMapKeySerialization()
-                .registerTypeAdapter(Multimap.class, new MultiMapAdapter())
-                .create();
-    }
+    public ObjectMapper create() {
+        ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final class MultiMapAdapter implements JsonSerializer<Multimap<String,String>>, JsonDeserializer<Multimap<String,String>> {
-        private static final Type asMapReturnType;
-        static {
-            try {
-                asMapReturnType = Multimap.class.getDeclaredMethod("asMap").getGenericReturnType();
-            } catch (NoSuchMethodException e) {
-                throw new AssertionError(e);
-            }
-        }
+        objectMapper = objectMapper.registerModule(new GuavaModule());
 
-        @Override
-        public JsonElement serialize(Multimap<String, String> src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src.asMap(), asMapType(typeOfSrc));
-        }
-
-
-        private static Type asMapType(Type multimapType) {
-            return TypeToken.of(multimapType).resolveType(asMapReturnType).getType();
-        }
-
-        @Override
-        public Multimap<String, String> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            Map<String, List<String>> asMap = context.deserialize(jsonElement, asMapType(type));
-            Multimap<String, String> multimap = ArrayListMultimap.create();
-            for (var entry : asMap.entrySet()) {
-                multimap.putAll(entry.getKey(), entry.getValue());
-            }
-            return multimap;
-        }
+        return objectMapper;
     }
 }
