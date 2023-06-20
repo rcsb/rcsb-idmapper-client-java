@@ -25,6 +25,10 @@ public class IdMapperRSocketClient implements IdMapperClient{
         this.jsonMapper = jsonMapper;
     }
 
+    public IdMapperRSocketClient(RSocket client) {
+        this(client, new JsonMapper().create());
+    }
+
 
     @Override
     public Mono<TranslateOutput> doTranslate(@Nonnull TranslateInput input) {
