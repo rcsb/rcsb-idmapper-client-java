@@ -1,6 +1,6 @@
 package org.rcsb.idmapper.client;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.rcsb.idmapper.input.AllInput;
 import org.rcsb.idmapper.input.GroupInput;
 import org.rcsb.idmapper.input.TranslateInput;
@@ -18,9 +18,9 @@ public class IdMapperHttpClient implements IdMapperClient {
     private final HttpClient httpClient;
     private final URI uri;
 
-    private final Gson jsonMapper;
+    private final ObjectMapper jsonMapper;
 
-    public IdMapperHttpClient(HttpClient httpClient, URI uri, Gson jsonMapper) {
+    public IdMapperHttpClient(HttpClient httpClient, URI uri, ObjectMapper jsonMapper) {
         this.httpClient = httpClient;
         this.uri = uri;
         this.jsonMapper = jsonMapper;

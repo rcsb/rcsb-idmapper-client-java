@@ -1,6 +1,7 @@
 package org.rcsb.idmapper.client;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rsocket.Payload;
 import io.rsocket.RSocket;
 import io.rsocket.util.ByteBufPayload;
@@ -17,38 +18,66 @@ public class IdMapperRSocketClient implements IdMapperClient{
 
     private final RSocket client;
 
-    private final Gson jsonMapper;
+    private final ObjectMapper jsonMapper;
 
-    public IdMapperRSocketClient(RSocket client, Gson jsonMapper) {
+    public IdMapperRSocketClient(RSocket client, ObjectMapper jsonMapper) {
         this.client = client;
         this.jsonMapper = jsonMapper;
+    }
+
+    public IdMapperRSocketClient(RSocket client) {
+        this(client, new JsonMapper().create());
     }
 
 
     @Override
     public Mono<TranslateOutput> doTranslate(@Nonnull TranslateInput input) {
-        return client.requestResponse(ByteBufPayload.create(jsonMapper.toJson(input), "/translate"))
-                .map(Payload::getDataUtf8)
-                .map(responsePayload -> {
-                    return jsonMapper.fromJson(responsePayload, TranslateOutput.class);
-                });
+        try {
+            return client.requestResponse(ByteBufPayload.create(jsonMapper.writeValueAsString(input), "/translate"))
+                    .map(Payload::getDataUtf8)
+                    .flatMap(responsePayload -> {
+                        try {
+                            return Mono.just(jsonMapper.readValue(responsePayload, TranslateOutput.class));
+                        } catch (JsonProcessingException e) {
+                            return Mono.error(e);
+                        }
+                    });
+        } catch (JsonProcessingException e) {
+            return Mono.error(e);
+        }
     }
 
     @Override
     public Mono<TranslateOutput> doGroup(@Nonnull GroupInput input) {
-        return client.requestResponse(ByteBufPayload.create(jsonMapper.toJson(input), "/group"))
-                .map(Payload::getDataUtf8)
-                .map(responsePayload -> {
-                    return jsonMapper.fromJson(responsePayload, TranslateOutput.class);
-                });
+        try {
+            return client.requestResponse(ByteBufPayload.create(jsonMapper.writeValueAsString(input), "/group"))
+                    .map(Payload::getDataUtf8)
+                    .flatMap(responsePayload -> {
+                        try {
+                            return Mono.just(jsonMapper.readValue(responsePayload, TranslateOutput.class));
+                        } catch (JsonProcessingException e) {
+                            return Mono.error(e);
+                        }
+                    });
+        } catch (JsonProcessingException e) {
+            return Mono.error(e);
+        }
     }
 
     @Override
     public Mono<AllOutput> doAll(@Nonnull AllInput input) {
-        return client.requestResponse(ByteBufPayload.create(jsonMapper.toJson(input), "/all"))
-                .map(Payload::getDataUtf8)
-                .map(responsePayload -> {
-                    return jsonMapper.fromJson(responsePayload, AllOutput.class);
-                });
+        try {
+            return client.requestResponse(ByteBufPayload.create(jsonMapper.writeValueAsString(input), "/all"))
+                    .map(Payload::getDataUtf8)
+                    .flatMap(responsePayload -> {
+                        try {
+                            return Mono.just(jsonMapper.readValue(responsePayload, AllOutput.class));
+                        } catch (JsonProcessingException e) {
+                            return Mono.error(e);
+                        }
+                    });
+        } catch (JsonProcessingException e) {
+            return Mono.error(e);
+        }
     }
 }
