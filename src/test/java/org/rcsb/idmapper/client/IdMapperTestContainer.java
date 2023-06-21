@@ -8,7 +8,7 @@ public class IdMapperTestContainer implements BeforeAllCallback, AfterAllCallbac
     private final GenericContainer<?> idMapper = new GenericContainer<>(
             DockerImageName.parse("harbor.devops.k8s.rcsb.org/ingvord/rcsb-idmapper:test-container"))
             //requires docker login
-            .withEnv("MONGODB_URI", "mongodb://updater:w31teQuerie5@132.249.210.169:27017/dw?authSource=admin&connectTimeoutMS=3000000&socketTimeoutMS=3000000")
+            .withEnv("MONGODB_URI", "mongodb://login:password@host:port/db?authSource=admin&connectTimeoutMS=3000000&socketTimeoutMS=3000000")
             //actual host port may be different, use container.getPortMapping(port)
             .withExposedPorts(7000,8080);
 
