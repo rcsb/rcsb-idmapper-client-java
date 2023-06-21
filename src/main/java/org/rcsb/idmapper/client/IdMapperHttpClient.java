@@ -17,7 +17,6 @@ public class IdMapperHttpClient implements IdMapperClient {
 
     private final HttpClient httpClient;
     private final URI uri;
-
     private final ObjectMapper jsonMapper;
 
     public IdMapperHttpClient(HttpClient httpClient, URI uri, ObjectMapper jsonMapper) {
@@ -26,11 +25,14 @@ public class IdMapperHttpClient implements IdMapperClient {
         this.jsonMapper = jsonMapper;
     }
 
+    public IdMapperHttpClient(HttpClient httpClient, URI uri) {
+        this(httpClient, uri, new JsonMapper().create());
+    }
 
     @Override
     public Mono<TranslateOutput> doTranslate(@Nonnull TranslateInput input){
         try {
-            var transport = new TranslateHttpTransport(jsonMapper,httpClient, uri.resolve("/translate"));
+            var transport = new TranslateHttpTransport(jsonMapper, httpClient, uri.resolve("/translate"));
             return Mono.just(transport.dispatch(input));//TODO we can use defer to postpone actual request to the subscribe moment
         } catch (IOException e) {
             return Mono.error(e);

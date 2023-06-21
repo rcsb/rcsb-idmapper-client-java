@@ -21,10 +21,6 @@ public abstract class HttpTransport<T extends Output<?>> implements Transport<T>
         this.uri = uri;
     }
 
-    public HttpTransport(HttpClient httpClient, URI uri) {
-        this(new JsonMapper().create(), httpClient, uri);
-    }
-
     @Override
     public T dispatch(Input input) throws IOException {
         var request = HttpRequest.newBuilder(uri)

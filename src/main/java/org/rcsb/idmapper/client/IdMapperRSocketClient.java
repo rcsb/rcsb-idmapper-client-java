@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.Nonnull;
 
-public class IdMapperRSocketClient implements IdMapperClient{
+public class IdMapperRSocketClient implements IdMapperClient {
 
     private final RSocket client;
 
