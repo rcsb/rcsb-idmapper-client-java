@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
-
+@Disabled("Disabled until connection issue is resolved")
 @ExtendWith(IdMapperTestContainer.class)
 public class IdMapperRSocketClientTest {
 

@@ -6,7 +6,7 @@ import org.testcontainers.utility.DockerImageName;
 
 public class IdMapperTestContainer implements BeforeAllCallback, AfterAllCallback, ParameterResolver {
     private final GenericContainer<?> idMapper = new GenericContainer<>(
-            DockerImageName.parse("harbor.devops.k8s.rcsb.org/ingvord/rcsb-idmapper:test-container"))
+            DockerImageName.parse("harbor.devops.k8s.rcsb.org/rcsb/rcsb-idmapper:test-container"))
             //requires docker login
             .withEnv("MONGODB_URI", "mongodb://login:password@host:port/db?authSource=admin&connectTimeoutMS=3000000&socketTimeoutMS=3000000")
             //actual host port may be different, use container.getPortMapping(port)
