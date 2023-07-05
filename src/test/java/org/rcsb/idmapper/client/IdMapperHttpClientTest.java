@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
-@Disabled("Disabled until connection issue is resolved")
 @ExtendWith(IdMapperTestContainer.class)
 class IdMapperHttpClientTest {
 
@@ -33,7 +32,7 @@ class IdMapperHttpClientTest {
     }
 
     @Test
-    @Disabled("long running perf test")
+    //@Disabled("long running perf test")
     void doTranslate() throws IOException {
         var input = new TranslateInput();
         input.ids = List.of("BHH4");

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.rcsb.common.constants.ContentType;
 import org.rcsb.idmapper.input.Input;
 import org.rcsb.idmapper.input.TranslateInput;
-import org.testcontainers.containers.GenericContainer;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
-@Disabled("Disabled until connection issue is resolved")
 @ExtendWith(IdMapperTestContainer.class)
 public class IdMapperRSocketClientTest {
 
@@ -32,7 +30,7 @@ public class IdMapperRSocketClientTest {
         var idMapper = idMapperTestContainer.getIdMapper();
         rsocket = RSocketConnector.create()
                 .payloadDecoder(PayloadDecoder.ZERO_COPY)
-                .connectWith(TcpClientTransport.create(idMapper.getHost(),idMapper.getMappedPort(7000))).block();
+                .connectWith(TcpClientTransport.create(idMapper.getHost(),idMapper.getMappedPort(9000))).block();
 
         var jsonMapper = new JsonMapper().create();
 
