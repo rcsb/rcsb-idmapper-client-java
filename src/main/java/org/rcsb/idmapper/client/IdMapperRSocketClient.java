@@ -34,12 +34,14 @@ public class IdMapperRSocketClient implements IdMapperClient {
     public Mono<TranslateOutput> doTranslate(@Nonnull TranslateInput input) {
         try {
             return client.requestResponse(ByteBufPayload.create(jsonMapper.writeValueAsString(input), "/translate"))
-                    .map(Payload::getDataUtf8)
-                    .flatMap(responsePayload -> {
+                    .flatMap(payload -> {
                         try {
+                            var responsePayload = payload.getDataUtf8();
                             return Mono.just(jsonMapper.readValue(responsePayload, TranslateOutput.class));
                         } catch (JsonProcessingException e) {
                             return Mono.error(e);
+                        } finally {
+                            payload.release();
                         }
                     });
         } catch (JsonProcessingException e) {
@@ -51,12 +53,14 @@ public class IdMapperRSocketClient implements IdMapperClient {
     public Mono<TranslateOutput> doGroup(@Nonnull GroupInput input) {
         try {
             return client.requestResponse(ByteBufPayload.create(jsonMapper.writeValueAsString(input), "/group"))
-                    .map(Payload::getDataUtf8)
-                    .flatMap(responsePayload -> {
+                    .flatMap(payload -> {
                         try {
+                            var responsePayload = payload.getDataUtf8();
                             return Mono.just(jsonMapper.readValue(responsePayload, TranslateOutput.class));
                         } catch (JsonProcessingException e) {
                             return Mono.error(e);
+                        } finally {
+                            payload.release();
                         }
                     });
         } catch (JsonProcessingException e) {
@@ -68,12 +72,14 @@ public class IdMapperRSocketClient implements IdMapperClient {
     public Mono<AllOutput> doAll(@Nonnull AllInput input) {
         try {
             return client.requestResponse(ByteBufPayload.create(jsonMapper.writeValueAsString(input), "/all"))
-                    .map(Payload::getDataUtf8)
-                    .flatMap(responsePayload -> {
+                    .flatMap(payload -> {
                         try {
+                            var responsePayload = payload.getDataUtf8();
                             return Mono.just(jsonMapper.readValue(responsePayload, AllOutput.class));
                         } catch (JsonProcessingException e) {
                             return Mono.error(e);
+                        } finally {
+                            payload.release();
                         }
                     });
         } catch (JsonProcessingException e) {
