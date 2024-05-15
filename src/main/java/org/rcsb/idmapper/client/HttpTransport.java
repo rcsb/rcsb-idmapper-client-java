@@ -26,7 +26,7 @@ public abstract class HttpTransport<T extends Output<?>> implements Transport<T>
         var request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(jsonMapper.writeValueAsString(input)))//TODO this is possibly super un-optimal
                 .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", "IdMapper Java Client")//TODO version
+                .setHeader("User-Agent", "ID-Mapper Java Client")//TODO version
                 .build();
 
         return handleResponse(request);
