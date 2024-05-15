@@ -1,9 +1,11 @@
 package org.rcsb.idmapper.client;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.*;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@Disabled("Requires creating an actual test image of rcsb-idmapper service. Must be revisited during migration to K8s")
 public class IdMapperTestContainer implements BeforeAllCallback, AfterAllCallback, ParameterResolver {
     private final GenericContainer<?> idMapper = new GenericContainer<>(
             DockerImageName.parse("harbor.devops.k8s.rcsb.org/rcsb/rcsb-idmapper:test-container"))

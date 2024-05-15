@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
+@Disabled("Requires creating an actual test image of rcsb-idmapper service. Must be revisited during migration to K8s")
 @ExtendWith(IdMapperTestContainer.class)
 public class IdMapperRSocketClientTest {
 
