@@ -62,3 +62,17 @@ jobs:
         run: |
           git push --all
           git push --tags
+  delay-for-maven-central:
+    needs: release-to-maven-central
+    runs-on:
+      - self-hosted
+      - java
+    steps:
+      # TODO This is not ideal, but needed because there are no options to wait in the maven plugin we use now (nexus-staging-maven-plugin), however
+      # TODO in the central-publishing-maven-plugin it seems to be possible for maven to hold the deploy process until maven says it's ready, see https://central.sonatype.org/publish/publish-portal-maven/
+      - name: Wait for rcsb-idmapper-client-java artifacts to appear in maven central
+        # retry every 60 seconds x 180 times: 3 hours (after which it will fail)
+        run: |
+          MAVEN_URL="https://repo1.maven.org/maven2/org/rcsb/rcsb-idmapper-client/$NEW_VERSION/rcsb-idmapper-client-$NEW_VERSION.pom"
+          echo "Will check the following URL via curl: $MAVEN_URL"
+          curl --retry 180 --retry-all-errors --retry-delay 60 -f "$MAVEN_URL"
