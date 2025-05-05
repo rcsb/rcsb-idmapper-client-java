@@ -21,6 +21,7 @@ public abstract class Input {
     public enum AggregationMethod {
         matching_deposit_group_id,
         sequence_identity,
-        matching_uniprot_accession
+        matching_uniprot_accession,
+        matching_chemical_component_id
     }
 }
